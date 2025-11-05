@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        display: flex;
+        flex-direction: row;
+        background-color: #f8f9fa;
+        min-height: 100vh;
+      }
+
+      #navbar-placeholder {
+        width: 250px; /* Sidebar width */
+        flex-shrink: 0;
+      }
+
+      .content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 20px;
+      }
+
+      .container {
+        width: 80%;
+        max-width: 900px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .notificationHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 10px;
+      }
+
+      #num-of-notif {
+        background-color: red;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 50%;
+        font-size: 14px;
+      }
+
+      #mark-as-read {
+        cursor: pointer;
+        color: #007bff;
+        font-size: 14px;
+        transition: 0.3s;
+      }
+
+      #mark-as-read:hover {
+        color: #0056b3;
+      }
+
+      .notificationCard {
+        background: #e3f2fd;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: 0.3s;
+        border-left: 5px solid #007bff;
+      }
+
+      .notificationCard.unread {
+        background: #bbdefb;
+        font-weight: bold;
+      }
+
+      .notificationCard:hover {
+        background: #90caf9;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 10px;
+        background: #0077b6;
+        color: white;
+        width: 120%;
+        margin-top: auto;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          flex-direction: column;
+        }
+
+        #navbar-placeholder {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="content">
+      <div class="container">
+        <header class="notificationHeader">
+          <h1>Notifications <span id="num-of-notif">0</span></h1>
+          <p id="mark-as-read">Mark All as Read</p>
+        </header>
+        <main id="notif-container"></main>
+      </div>
+      <footer class="footer">
+        <p>&copy; 2025 RailwayInspection. All Rights Reserved.</p>
+      </footer>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load the navbar from an external HTML file
+        fetch("navbar.html")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("navbar-placeholder").innerHTML = data;
+          })
+          .catch((error) => console.error("Error loading navbar:", error));
+      });
+
+      function fetchNotifications() {
+        fetch("/api/notification")
+          .then((response) => response.json())
+          .then((data) => {
+            const notifBadge = document.getElementById("num-of-notif");
+            const notifContainer = document.getElementById("notif-container");
+
+            notifContainer.innerHTML = "";
+            const validFaults = (data.faults || []).filter(fault => 
+             fault.track && fault.issue && fault.issue.trim() !== ""
+             );
+            data.faults = validFaults;
+            // Update badge count
+            notifBadge.textContent = data.faults.length;
+
+            // Loop through each fault and create a notification card
+            data.faults.forEach((fault) => {
+              const notifCard = document.createElement("div");
+              notifCard.classList.add("notificationCard", "unread");
+
+              // Set content
+              notifCard.innerHTML = `<p>Track ${fault.track}: ${fault.issue}</p>`;
+
+              // On click: mark as read and navigate to the track-details page
+              notifCard.addEventListener("click", () => {
+                notifCard.classList.remove("unread");
+                updateUnreadCount();
+                window.location.href = `track-details.html?track=${fault.track}`;
+              });
+
+              notifContainer.appendChild(notifCard);
+            });
+          })
+          .catch((error) =>
+            console.error("Error fetching notifications:", error)
+          );
+      }
+
+      // Updates the badge with current unread count
+      function updateUnreadCount() {
+        const unreadCount = document.querySelectorAll(
+          ".notificationCard.unread"
+        ).length;
+        document.getElementById("num-of-notif").textContent = unreadCount;
+      }
+
+      // Marks all notifications as read
+      document.getElementById("mark-as-read").addEventListener("click", () => {
+        document
+          .querySelectorAll(".notificationCard.unread")
+          .forEach((card) => {
+            card.classList.remove("unread");
+          });
+        updateUnreadCount();
+      });
+
+      // Fetch notifications once the page is fully loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load the navbar from an external HTML file
+        fetch("navbar.html")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("navbar-placeholder").innerHTML = data;
+          })
+          .catch((error) => console.error("Error loading navbar:", error));
+
+        // Fetch notifications
+        fetchNotifications();
+      });
+    </script>
+  </body>
+</html>

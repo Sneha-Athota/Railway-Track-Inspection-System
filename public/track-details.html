@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Details</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Wix+Madefor+Text&display=swap");
+
+    body {
+      font-family: "Wix Madefor Text", sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+    }
+
+    #navbar-placeholder {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 270px;
+      height: 100vh;
+      z-index: 100;
+    }
+
+    .content {
+      margin-left: 270px;
+      padding: 40px 20px;
+      width: calc(100% - 270px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      color: #0077b6;
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    h3 {
+      font-size: 22px;
+      font-weight: bold;
+      color: #0077b6;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      font-size: 24px;
+      font-weight: 300;
+      color: #0077b6;
+      font-weight: bold;
+    }
+
+    video {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .carousel-container {
+      width: 90%;
+      max-width: 1000px;
+      position: relative;
+      margin-bottom: 80px;
+    }
+
+    .carousel {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      gap: 20px;
+      padding: 10px;
+    }
+
+    .card {
+      flex: 0 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      text-align: center;
+      padding: 15px;
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .card p {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .nav-btn {
+      position: absolute;
+      top: 40%;
+      transform: translateY(-50%);
+      background-color: #0077b6;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .left-btn {
+      left: -50px;
+    }
+
+    .right-btn {
+      right: -50px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 10px;
+      background: #0077b6;
+      color: white;
+      width: calc(100% - 270px);
+      margin-left: 270px;
+      position: fixed;
+      bottom: 0;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+      transform: scale(2);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 32px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      line-height: 40px;
+      text-align: center;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .carousel-container {
+        width: 100%;
+      }
+
+      .card {
+        width: 250px;
+      }
+
+      .left-btn, .right-btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <div class="content">
+    <h2>Track Details</h2>
+    <h3 id="track-meta">Loading...</h3>
+
+    <div class="subtitle">Track Video</div>
+    <video id="track-video" width="800" height="450" controls>
+      Your browser does not support the video tag.
+    </video>
+
+    <div class="carousel-container">
+      <button class="nav-btn left-btn" onclick="scrollCarousel(-1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="carousel" id="carousel"></div>
+      <button class="nav-btn right-btn" onclick="scrollCarousel(1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2025 RailwayInspection. All Rights Reserved.</p>
+    </footer>
+  </div>
+
+  <div class="modal" id="imageModal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <img id="modalImage" src="" alt="Full Sized Fault" />
+  </div>
+
+  <script>
+    function scrollCarousel(direction) {
+      const container = document.getElementById("carousel");
+      container.scrollBy({ left: direction * 320, behavior: "smooth" });
+    }
+
+    function showImageModal(src) {
+      const modal = document.getElementById("imageModal");
+      const modalImg = document.getElementById("modalImage");
+      modalImg.src = src;
+      modal.style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("imageModal").style.display = "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const navbar = await fetch("navbar.html").then(res => res.text());
+      document.getElementById("navbar-placeholder").innerHTML = navbar;
+
+      const params = new URLSearchParams(window.location.search);
+      const track = params.get("track");
+      if (!track) {
+        alert("Track parameter not found!");
+        return;
+      }
+
+      const response = await fetch(`/api/fault-report?trackName=${track}`);
+      const report = await response.json();
+      if (!report) {
+        alert("No fault report found.");
+        return;
+      }
+
+      const { faultImages, imageContainer, trackVideo, videoContainer, numberofFaults, updatedAt } = report;
+
+      const date = new Date(updatedAt).toLocaleString();
+      document.getElementById("track-meta").textContent =
+        `Track:  ${track} |  Faults: ${numberofFaults} |  Date & Time:  ${date}`;
+
+      const videoResp = await fetch(`/api/generate-sas?containerName=${videoContainer}&blobName=${trackVideo}`);
+      const videoData = await videoResp.json();
+      document.getElementById("track-video").src = videoData.sasUrl;
+
+      const carousel = document.getElementById("carousel");
+      for (const img of faultImages) {
+        const imgResp = await fetch(`/api/generate-sas?containerName=${imageContainer}&blobName=${img.image}`);
+        const imgData = await imgResp.json();
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const image = document.createElement("img");
+        image.src = imgData.sasUrl;
+        image.alt = img.description;
+        image.onclick = () => showImageModal(imgData.sasUrl);
+
+        const caption = document.createElement("p");
+        caption.textContent = img.description;
+
+        card.appendChild(image);
+        card.appendChild(caption);
+        carousel.appendChild(card);
+      }
+    });
+  </script>
+</body>
+</html>

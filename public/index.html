@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Login</title>
+</head>
+<body>
+    <!-- Intro Screen -->
+    <div class="intro-screen" id="introScreen">
+        <p class="intro-text">RAILWAY INSPECTION SYSTEM</p>
+        <button class="sign-in-icon" id="introSignInBtn">Sign In</button>
+    </div>
+
+    <!-- Main Login Page (Initially Hidden) -->
+    <div class="wrapper hidden" id="loginWrapper">
+        <nav class="nav">
+            <div class="nav-logo">
+                <p>RAILWAY INSPECTION SYSTEM</p>
+            </div>
+            <div class="nav-button">
+                <button class="btn white-btn" id="loginBtn">Sign In</button>
+            </div>
+        </nav>
+
+        <!------------------- login form -------------------------->
+        <div class="form-box">
+            <div class="login-container" id="login">
+                <br>
+                <div class="top">
+                    <header>Login</header>
+                </div>
+                <form id="loginForm">
+                    <div class="input-box">
+                        <input type="text" id="username" class="input-field" placeholder="Username" required>
+                        <i class="bx bx-user"></i>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" id="password" class="input-field" placeholder="Password" required>
+                        <i class="bx bx-lock-alt"></i>
+                    </div>
+                    <p class="error" id="error-message"></p>
+                    <div class="input-box">
+                        <input type="submit" class="submit" value="Sign In">
+                    </div>
+                    <div class="two-col">
+                        <div class="one">
+                            <input type="checkbox" id="login-check">
+                            <label for="login-check"> Remember Me</label>
+                        </div>
+                        <div class="two">
+                            <label><a href="#">Forgot password?</a></label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 RailwayInspection. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById("introSignInBtn").addEventListener("click", function () {
+            document.getElementById("introScreen").classList.add("fade-out");
+            setTimeout(() => {
+                document.getElementById("introScreen").style.display = "none";
+                document.getElementById("loginWrapper").classList.remove("hidden");
+                document.getElementById("loginWrapper").classList.add("fade-in");
+            }, 500);
+        });
+
+        document.getElementById("loginForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const errorMessage = document.getElementById("error-message");
+
+            if (username === "admin" && password === "password123") {
+                //alert("Login successful!");
+                window.location.href = "dashboard.html";
+            } else {
+                errorMessage.textContent = "Invalid username or password";
+            }
+        });
+
+        document.getElementById("introSignInBtn").addEventListener("click", function () {
+            const introScreen = document.getElementById("introScreen");
+            const loginWrapper = document.getElementById("loginWrapper");
+
+            // Apply fade-out effect to intro screen
+            introScreen.classList.add("fade-out");
+
+            // Wait for fade-out transition before hiding and showing login
+            setTimeout(() => {
+                introScreen.style.display = "none"; // Hide intro screen
+                loginWrapper.style.display = "flex"; // Ensure visibility
+                setTimeout(() => {
+                    loginWrapper.classList.add("show-login"); // Apply fade-in effect
+                }, 10); // Small delay to trigger CSS transition
+            }, 500);
+        });
+    </script>
+</body>
+</html>

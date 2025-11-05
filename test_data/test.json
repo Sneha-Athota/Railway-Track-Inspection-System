@@ -1,0 +1,28 @@
+{
+    "trackName": "Track 1",
+    "numberofFaults": 4,
+    "faultImages": [
+        {
+            "image": "1.MOV_20201221091849_0252.JPEG",
+            "description": "Fault detected with confidence 0.0194",
+            "timestamp": 1744489653350
+        },
+        {
+            "image": "1.MOV_20201221091849_0253.JPEG",
+            "description": "Fault detected with confidence 0.0112",
+            "timestamp": 1744489653350
+        },
+        {
+            "image": "1.MOV_20201221091849_2634.JPEG",
+            "description": "Fault detected with confidence 0.1140",
+            "timestamp": 1744489653350
+        },
+        {
+            "image": "5.MOV_20201223130541_5484.JPEG",
+            "description": "Fault detected with confidence 0.0061",
+            "timestamp": 1744489653350
+        }
+    ],
+    "imageContainer": "faultimagecontainer",
+    "trackVideo": "video.mp4"
+}

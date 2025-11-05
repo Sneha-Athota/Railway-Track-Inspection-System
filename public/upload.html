@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Track Video</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Wix+Madefor+Text&display=swap");
+
+      body {
+        font-family: "Wix Madefor Text", sans-serif;
+        background-color: #f4f4f4;
+        display: flex;
+      }
+
+      #navbar-placeholder {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 270px;
+        height: 100vh;
+        z-index: 100;
+      }
+
+      .content {
+        margin-left: 270px;
+        padding: 40px 20px;
+        width: calc(100% - 270px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h2 {
+        color: #0077b6;
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 30px;
+      }
+
+      form {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      input,
+      button {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        font-size: 16px;
+      }
+
+      button {
+        background-color: #0077b6;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background-color: #005f8e;
+      }
+
+      #progressBar {
+        width: 100%;
+        background-color: #eee;
+        height: 20px;
+        border-radius: 5px;
+        position: relative;
+        overflow: hidden;
+        margin-top: 10px;
+        display: none;
+      }
+
+      #progressBar > div {
+        height: 100%;
+        width: 0%;
+        background-color: #28a745;
+        border-radius: 5px;
+        transition: width 0.4s ease;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        line-height: 20px;
+      }
+
+      #script-action {
+        display: none;
+        margin-top: 15px;
+        width: 100%;
+      }
+
+      #statusMsg {
+        text-align: center;
+        margin-top: 15px;
+        font-weight: bold;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 10px;
+        background: #0077b6;
+        color: white;
+        width: calc(100% - 270px);
+        margin-left: 270px;
+        position: fixed;
+        bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="content">
+      <h2>Upload Track Video</h2>
+      <form id="upload-form">
+        <input
+          type="text"
+          id="trackName"
+          placeholder="Enter Track Name (e.g., TR1)"
+          required
+        />
+        <input type="file" id="videoFile" accept="video/mp4" required />
+        <button type="submit">Upload Video</button>
+
+        <div id="script-action">
+          <button type="button" id="executeScriptBtn">Execute</button>
+        </div>
+
+        <div id="progressBar"><div></div></div>
+
+        <p id="statusMsg"></p>
+      </form>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2025 RailwayInspection. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+      let currentTrack = "";
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const navbar = await fetch("navbar.html").then((res) => res.text());
+        document.getElementById("navbar-placeholder").innerHTML = navbar;
+      });
+
+      document
+        .getElementById("upload-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const trackInput = document.getElementById("trackName");
+          const fileInput = document.getElementById("videoFile");
+          const statusMsg = document.getElementById("statusMsg");
+          const progressBar = document.getElementById("progressBar");
+          const progressInner = progressBar.querySelector("div");
+          const scriptSection = document.getElementById("script-action");
+          const scriptButton = document.getElementById("executeScriptBtn");
+
+          const trackName = trackInput.value.trim();
+          const file = fileInput.files[0];
+
+          if (!trackName || !file) {
+            alert("Please enter track name and select a file.");
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("trackName", trackName);
+          formData.append("video", file);
+
+          // Reset UI
+          statusMsg.textContent = "";
+          statusMsg.style.color = "green";
+          progressBar.style.display = "block";
+          progressInner.style.width = "0%";
+          progressInner.textContent = "";
+          scriptSection.style.display = "none";
+
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "/api/upload-video", true);
+
+          xhr.upload.addEventListener("progress", function (e) {
+            if (e.lengthComputable) {
+              const percent = Math.round((e.loaded / e.total) * 100);
+              progressInner.style.width = percent + "%";
+              progressInner.textContent = percent + "%";
+            }
+          });
+
+          xhr.onload = function () {
+            if (xhr.status === 200) {
+              // Simulate waiting after upload (before final response)
+              progressInner.style.width = "100%";
+              progressInner.textContent = "100%";
+
+              // Optional delay or animation to simulate backend finalizing
+              setTimeout(() => {
+                progressBar.style.display = "none";
+                statusMsg.textContent = "Video uploaded successfully.";
+                trackInput.value = "";
+                fileInput.value = "";
+
+                currentTrack = trackName;
+                scriptButton.textContent = `Detect Fault on Track ${trackName}`;
+                scriptSection.style.display = "block";
+              }, 1000); // adjust delay to match backend speed if needed
+            } else {
+              progressBar.style.display = "none";
+              statusMsg.textContent = "Upload failed.";
+              statusMsg.style.color = "red";
+            }
+          };
+
+          xhr.onerror = function () {
+            progressBar.style.display = "none";
+            statusMsg.textContent = "Network error during upload.";
+            statusMsg.style.color = "red";
+          };
+
+          xhr.send(formData);
+        });
+
+      document
+        .getElementById("executeScriptBtn")
+        .addEventListener("click", function () {
+          const statusMsg = document.getElementById("statusMsg");
+          const progressBar = document.getElementById("progressBar");
+          const progressInner = progressBar.querySelector("div");
+          const scriptSection = document.getElementById("script-action");
+
+          if (!currentTrack) return;
+
+          statusMsg.textContent = "";
+          statusMsg.style.color = "green";
+          progressBar.style.display = "block";
+          progressInner.style.width = "0%";
+          progressInner.textContent = "";
+
+          let progress = 0;
+          const interval = setInterval(() => {
+            if (progress < 90) {
+              progress += 5;
+              progressInner.style.width = `${progress}%`;
+              progressInner.textContent = `${progress}%`;
+            }
+          }, 300);
+
+          const eventSource = new EventSource(
+            `/api/stream-detection?trackName=${encodeURIComponent(
+              currentTrack
+            )}`
+          );
+
+          let scriptCompleted = false;
+
+          eventSource.onmessage = function (event) {
+            const msg = event.data;
+
+            if (msg.includes("Python script exited with code 0")) {
+              clearInterval(interval);
+              progressInner.style.width = "100%";
+              progressInner.textContent = "100%";
+              progressBar.style.display = "none";
+              scriptSection.style.display = "none";
+              statusMsg.textContent =
+                "✅ Video frames extracted and fault image generated successfully.";
+              scriptCompleted = true; // mark as completed
+              eventSource.close(); // close manually
+            } else if (msg.includes("Python script exited with code")) {
+              clearInterval(interval);
+              progressBar.style.display = "none";
+              statusMsg.textContent = "❌ Python script ended with error.";
+              statusMsg.style.color = "red";
+            }
+          };
+
+          eventSource.onerror = function () {
+            clearInterval(interval);
+            eventSource.close();
+            if (!scriptCompleted) {
+              progressBar.style.display = "none";
+              statusMsg.textContent =
+                "❌ Connection lost while streaming logs.";
+              statusMsg.style.color = "red";
+            }
+          };
+        });
+    </script>
+  </body>
+</html>
