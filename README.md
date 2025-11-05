@@ -17,18 +17,12 @@ Key features include:
 
 # How to Run
 If you’d like to run this program on your local machine, make sure you have Node.js and Python installed.
+
 You can download Node.js from: https://nodejs.org
+
 and Python from: https://www.python.org
 
 Then follow these steps:
-#Clone this repository
-git clone https://github.com/your-username/railway-track-inspection.git
-
-#Navigate into the project folder \n /n
-cd railway-track-inspection
-
-#Install Node.js dependencies
-npm install
-
-#Start the server
-node server.js
+- git clone https://github.com/your-username/railway-track-inspection.git
+- npm install
+- node server.js
