@@ -24,7 +24,7 @@ Then follow these steps:
 #Clone this repository
 git clone https://github.com/your-username/railway-track-inspection.git
 
-#Navigate into the project folder
+#Navigate into the project folder \n /n
 cd railway-track-inspection
 
 #Install Node.js dependencies
