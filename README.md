@@ -10,10 +10,10 @@ Key features include:
 - Web interface for easy access by railway operators
 
 # Tech Stack
-Frontend: HTML, CSS, JavaScript
-Backend: Node.js, Express.js
-Machine Learning & AI: Python (for the deep learning defect detection model)
-Database: MongoDB
+- Frontend: HTML, CSS, JavaScript
+- Backend: Node.js, Express.js
+- Machine Learning: Python (for the deep learning defect detection model)
+- Database: MongoDB
 
 # How to Run
 If you’d like to run this program on your local machine, make sure you have Node.js and Python installed.
